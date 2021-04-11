@@ -7,9 +7,9 @@ import (
 )
 
 const (
-	Reset   = ansi.Reset
-	Inverse = ansi.Inverse
-	fmtANSI = ansi.FmtANSI
+	Reset      string = ansi.Reset
+	SetInverse string = ansi.SetInverse
+	fmtANSI    string = ansi.FmtANSI
 )
 
 type Ansi = ansi.Ansi
