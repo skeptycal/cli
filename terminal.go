@@ -20,7 +20,16 @@ type Terminal struct {
 	// Implementations must not retain p.
 	w io.Writer `default:"defaultWriter"`
 
-	useColor          bool `default:"true"`
+	// useColor is true if the terminal supports color and colored
+	// output is desired. It is true by default.
+	useColor bool `default:"true"`
+
+	// on is an internal function that is called when the terminal
+	// color is requested. The function is mapped here in lieu of
+	// doing numerous checks of the useColor flag.
+	//
+	// on is set to point to doCheckColor() if useColor is true
+	// and is set to point to noOp() if useColor is false.
 	on                func(w io.Writer, p []byte) (n int, err error)
 	devMode           bool
 	colorBytes        []byte
@@ -34,7 +43,7 @@ type Terminal struct {
 // Inverse sets the inverse ANSI effect if the terminal supports it.
 func (t *Terminal) Inverse() {
 	if t.useColor {
-		t.Print(simpleEncode(Inverse))
+		t.Print(simpleEncode(inverse))
 	}
 }
 

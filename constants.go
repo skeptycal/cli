@@ -4,20 +4,20 @@
 package cli
 
 import (
-	"fmt"
-
 	"github.com/skeptycal/ansi"
-)
-
-const (
-	Reset   string = ansi.Reset
-	Inverse byte   = ansi.Inverse
-	// SetInverse string = ansi.SetInverse
-	fmtANSI string = ansi.FmtANSI
 )
 
 type Ansi = ansi.Ansi
 
-func simpleEncode(b byte) string {
-	return fmt.Sprintf(fmtANSI, b)
-}
+const (
+	Reset   string = ansi.Reset
+	inverse byte   = ansi.Inverse
+	// SetInverse string = ansi.SetInverse
+	fmtANSI string = ansi.FmtANSI
+	// ResetBytes []byte = []byte(ansi.Reset)
+)
+
+var (
+	ResetBytes   []byte = ansi.ResetBytes
+	InverseBytes []byte = []byte(simpleEncode(inverse))
+)

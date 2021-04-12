@@ -23,6 +23,7 @@ const (
 var (
 	defaultWriter      io.Writer = newAnsiStdout()
 	defaultErrorWriter io.Writer = newAnsiStderr()
+	Output             CLI       = New()
 )
 
 // newAnsiStdout returns stdout which converts escape sequences
@@ -50,7 +51,13 @@ type CLI interface {
 	CLIControls
 }
 
-func NewStdout(w io.Writer) CLI {
+// New returns a new ANSI compatible terminal interface based on
+// os.Stdout with ANSI support enabled by default.
+func New() CLI {
+	return NewFromWriter(defaultWriter)
+}
+
+func NewFromWriter(w io.Writer) CLI {
 	checkColor := true // TODO check if color is supported - bring this code over ...
 	devMode := defaultDevMode
 	if w == nil {
@@ -67,9 +74,9 @@ func NewStdout(w io.Writer) CLI {
 	}
 
 	if checkColor {
-		t.on = doCheckColor
+		t.on = t.colorWrite
 	} else {
-		t.on = noOp
+		t.on = t.noOp
 	}
 
 	return t

@@ -5,14 +5,24 @@ import (
 	"io"
 )
 
-// Write writes len(p) bytes from p to the underlying data stream.
+// Write writes len(p) bytes from p to the Terminal data stream.
+// The bytes are wrapped in ansi escape codes using the current
+// Terminal colorBytes field and the Reset constant. This ensures
+// that the terminal is not left in an unknown state if other
+// programs write to it concurrently.
 //
-// It returns the number of bytes written from p (0 <= n <= len(p))
-// and any error encountered that caused the write to stop early.
-// Write must return a non-nil error if it returns n < len(p).
-// Write must not modify the slice data, even temporarily.
+// It returns the number of bytes written from p (0 <= n <= len(p)).
+// The bytes sent to set and reset ANSI escape codes are not
+// included in the returned value. This maintains compatibility
+// with the io.Writer interface.
 //
-// Implementations must not retain p.
+// Any error encountered that caused the write to stop early is
+// also returned.
+// Write returns io.ErrShortWrite if n < len(p) and no other
+// explicit error was identified.
+//
+// As specified by io.Writer, Write does not modify the slice
+// data, even temporarily and does not retain p.
 func (t *Terminal) Write(p []byte) (n int, err error) {
 	// TODO - save current ansi colors??
 
@@ -27,16 +37,19 @@ func (t *Terminal) Write(p []byte) (n int, err error) {
 	if err != nil {
 		return n, err
 	}
-	if n < len(p) {
-		return n, io.ErrShortWrite
-	}
 
 	// TODO instead of Reset(() - restore saved ansi colors??
 
 	_, err = t.w.Write([]byte(Reset))
+
+	if n < len(p) {
+		return n, io.ErrShortWrite
+	}
+
 	if err != nil {
 		return n, err
 	}
+
 	return n, nil
 }
 
@@ -114,10 +127,10 @@ func (t *Terminal) Println(args ...interface{}) (n int, err error) {
 	return sum + n, nil
 }
 
-func doCheckColor(w io.Writer, p []byte) (n int, err error) {
-	return w.Write(p)
+func (t *Terminal) colorWrite(w io.Writer, p []byte) (n int, err error) {
+	return t.Write(p)
 }
 
-func noOp(w io.Writer, p []byte) (n int, err error) {
+func (t *Terminal) noOp(w io.Writer, p []byte) (n int, err error) {
 	return 0, nil
 }
