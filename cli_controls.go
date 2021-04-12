@@ -56,7 +56,7 @@ func (t *Terminal) Hr() {
 
 // Br creates a line break.
 func (t *Terminal) Br() {
-	fmt.Fprintln(t.Writer, "")
+	fmt.Fprintln(t.w, "")
 }
 
 func (t *Terminal) screenWidth() int {
@@ -70,7 +70,7 @@ func (t *Terminal) UseColor(b bool) {
 		return
 	}
 	if !b {
-		fmt.Fprint(t.Writer, Reset)
+		fmt.Fprint(t.w, Reset)
 	}
 	t.useColor = b
 }

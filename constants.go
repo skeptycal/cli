@@ -1,3 +1,6 @@
+// The constants.go file contains type definitions and constants mainly from the ansi package.
+// Reference: github.com/skeptycal/ansi
+
 package cli
 
 import (
@@ -7,9 +10,10 @@ import (
 )
 
 const (
-	Reset      string = ansi.Reset
-	SetInverse string = ansi.SetInverse
-	fmtANSI    string = ansi.FmtANSI
+	Reset   string = ansi.Reset
+	Inverse byte   = ansi.Inverse
+	// SetInverse string = ansi.SetInverse
+	fmtANSI string = ansi.FmtANSI
 )
 
 type Ansi = ansi.Ansi

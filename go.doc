@@ -1,0 +1,12 @@
+package cli // import "github.com/skeptycal/cli"
+
+const Reset string = ansi.Reset ...
+func WriteString(w io.Writer, s string) (n int, err error)
+func NewLogger() logger
+type Ansi = ansi.Ansi
+type CLI interface{ ... }
+    func NewStderr(w io.Writer) CLI
+    func NewStdout(w io.Writer) CLI
+type CLIControls interface{ ... }
+type CursorControls interface{ ... }
+type Terminal struct{ ... }

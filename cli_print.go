@@ -5,39 +5,72 @@ import (
 	"io"
 )
 
+// Write writes len(p) bytes from p to the underlying data stream.
+//
+// It returns the number of bytes written from p (0 <= n <= len(p))
+// and any error encountered that caused the write to stop early.
+// Write must return a non-nil error if it returns n < len(p).
+// Write must not modify the slice data, even temporarily.
+//
+// Implementations must not retain p.
 func (t *Terminal) Write(p []byte) (n int, err error) {
-	// TODO - save current ansi colors
+	// TODO - save current ansi colors??
 
-	// t.on()
+	_, err = t.w.Write(t.colorBytes)
+	if err != nil {
+		return 0, err
+	}
 
-	n, err = t.Writer.Write(p)
+	// this value of n is the one that is returned to provide
+	// consistant behavor for the io.Writer interface.
+	n, err = t.w.Write(p)
 	if err != nil {
 		return n, err
 	}
+	if n < len(p) {
+		return n, io.ErrShortWrite
+	}
 
-	// TODO instead of Reset(() - restore saved ansi colors
-	t.Reset()
-	return
+	// TODO instead of Reset(() - restore saved ansi colors??
+
+	_, err = t.w.Write([]byte(Reset))
+	if err != nil {
+		return n, err
+	}
+	return n, nil
 }
 
+// WriteString writes the contents of s to the underlying data stream.
+//
+// It uses the io.Writer interface and follows standard conventions:
+//
+// It returns the number of bytes written from s (0 <= n <= len(s))
+// and any error encountered that caused the write to stop early.
+// WriteString must return a non-nil error if it returns n < len(s).
+// Write must not modify the string data, even temporarily.
+//
+// Implementations must not retain s.
 func (t *Terminal) WriteString(s string) (n int, err error) {
+	// if sw, ok := t.w.(io.StringWriter); ok {
+	// 	return sw.WriteString(s)
+	// }
 	return t.Write([]byte(s))
 }
 
 // Print wraps args in ANSI 8-bit color codes (256 color codes)
 func (t *Terminal) Print(args ...interface{}) (n int, err error) {
 	sum := 0
-	n, err = fmt.Fprint(t.Writer, t.colorBytes)
+	n, err = fmt.Fprint(t.w, t.colorBytes)
 	if err != nil {
 		return 0, err
 	}
 	sum += n
-	n, err = fmt.Fprint(t.Writer, args...)
+	n, err = fmt.Fprint(t.w, args...)
 	if err != nil {
 		return sum, err
 	}
 	sum += n
-	n, err = fmt.Fprint(t.Writer, Reset)
+	n, err = fmt.Fprint(t.w, Reset)
 	if err != nil {
 		return sum, err
 	}
@@ -47,17 +80,17 @@ func (t *Terminal) Print(args ...interface{}) (n int, err error) {
 // Printf wraps args in ANSI 8-bit color codes (256 color codes)
 func (t *Terminal) Printf(s string, args ...interface{}) (n int, err error) {
 	sum := 0
-	n, err = fmt.Fprint(t.Writer, t.colorBytes)
+	n, err = fmt.Fprint(t.w, t.colorBytes)
 	if err != nil {
 		return 0, err
 	}
 	sum += n
-	n, err = fmt.Fprintf(t.Writer, s, args...)
+	n, err = fmt.Fprintf(t.w, s, args...)
 	if err != nil {
 		return sum, err
 	}
 	sum += n
-	n, err = fmt.Fprint(t.Writer, Reset)
+	n, err = fmt.Fprint(t.w, Reset)
 	if err != nil {
 		return sum, err
 	}
