@@ -21,7 +21,8 @@ type Terminal struct {
 	w io.Writer `default:"defaultWriter"`
 
 	// useColor is true if the terminal supports color and colored
-	// output is desired. It is true by default.
+	// output is desired. It is true by default on terminals that
+	// support it.
 	useColor bool `default:"true"`
 
 	// on is an internal function that is called when the terminal
@@ -30,9 +31,23 @@ type Terminal struct {
 	//
 	// on is set to point to doCheckColor() if useColor is true
 	// and is set to point to noOp() if useColor is false.
-	on                func(w io.Writer, p []byte) (n int, err error)
-	devMode           bool
-	colorBytes        []byte
+	on func(w io.Writer, p []byte) (n int, err error)
+
+	// devMode is a flag that indicates whether the terminal is being
+	// used in a development environment where additional verbose
+	// output and logging is often desired.
+	devMode bool
+
+	// colorBytes is the []byte representation of the current ANSI
+	// color sequence(s) to be used when wrapping the terminal
+	// output.
+	colorBytes []byte
+
+	// defaultForeground is the default ANSI 8bit foreground color
+	// that is used when no other foreground is specified. This
+	// requires a byte (int8) that is mapped to the ANSI code
+	// with the appropriate format string:
+	// FMTAnsi = "\033[38;5;%v;m"
 	defaultForeground byte `default:"15"`
 	defaultBackground byte // default is Zero Value (0)
 	defaultEffect     byte // default is Zero Value (0)

@@ -12,4 +12,7 @@ func main() {
 	out.Print("CLI example")
 	out.Br()
 
+	out.Print(cli.InverseBytes)
+	out.Print("CLI inverse example")
+
 }
