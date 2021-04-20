@@ -46,11 +46,7 @@ func (t *Terminal) Write(p []byte) (n int, err error) {
 		return n, io.ErrShortWrite
 	}
 
-	if err != nil {
-		return n, err
-	}
-
-	return n, nil
+	return
 }
 
 // WriteString writes the contents of s to the underlying data stream.
@@ -72,59 +68,20 @@ func (t *Terminal) WriteString(s string) (n int, err error) {
 
 // Print wraps args in ANSI 8-bit color codes (256 color codes)
 func (t *Terminal) Print(args ...interface{}) (n int, err error) {
-	sum := 0
-	n, err = fmt.Fprint(t.w, t.colorBytes)
-	if err != nil {
-		return 0, err
-	}
-	sum += n
-	n, err = fmt.Fprint(t.w, args...)
-	if err != nil {
-		return sum, err
-	}
-	sum += n
-	n, err = fmt.Fprint(t.w, Reset)
-	if err != nil {
-		return sum, err
-	}
-	return sum + n, nil
+	return t.WriteString(fmt.Sprint(args...))
 }
 
 // Printf wraps args in ANSI 8-bit color codes (256 color codes)
-func (t *Terminal) Printf(s string, args ...interface{}) (n int, err error) {
-	sum := 0
-	n, err = fmt.Fprint(t.w, t.colorBytes)
-	if err != nil {
-		return 0, err
-	}
-	sum += n
-	n, err = fmt.Fprintf(t.w, s, args...)
-	if err != nil {
-		return sum, err
-	}
-	sum += n
-	n, err = fmt.Fprint(t.w, Reset)
-	if err != nil {
-		return sum, err
-	}
-	return sum + n, nil
+func (t *Terminal) Printf(fmtString string, args ...interface{}) (n int, err error) {
+	v := fmt.Sprintf(fmtString, args...)
+	return t.Print(v)
 }
 
 // Println wraps args in ANSI 8-bit color codes (256 color codes)
 // and adds a newline character
 func (t *Terminal) Println(args ...interface{}) (n int, err error) {
-	sum := 0
-
-	n, err = t.Print(args...)
-	if err != nil {
-		return 0, err
-	}
-	sum += n
-	n, err = t.Print("\n")
-	if err != nil {
-		return sum, err
-	}
-	return sum + n, nil
+	v := fmt.Sprintln(args...)
+	return t.Print(v)
 }
 
 func (t *Terminal) colorWrite(w io.Writer, p []byte) (n int, err error) {
