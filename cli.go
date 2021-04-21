@@ -20,10 +20,12 @@ const (
 // defaultCLIeffect          = 0
 )
 
+const defaultDevMode = true
+
 var (
 	defaultWriter      io.Writer = newAnsiStdout()
 	defaultErrorWriter io.Writer = newAnsiStderr()
-	Output             CLI       = New()
+	// Output             CLI       = New()
 )
 
 // newAnsiStdout returns stdout which converts escape sequences

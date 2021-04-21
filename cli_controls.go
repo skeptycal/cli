@@ -75,8 +75,6 @@ func (t *Terminal) UseColor(b bool) {
 	t.useColor = b
 }
 
-const defaultDevMode = false
-
 // DevMode manually sets the Dev mode to true (for debugging)
 // or false (for production). Default is false.
 func (t *Terminal) DevMode(b bool) {

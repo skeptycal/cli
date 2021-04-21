@@ -6,7 +6,7 @@ import (
 	logrus "github.com/sirupsen/logrus"
 )
 
-type Logger = logrus.Logger
+// type Logger = logrus.Logger
 
 var log = NewLogger()
 
@@ -27,9 +27,9 @@ var log = NewLogger()
 //    }
 //
 // It's recommended to make this a global instance called `log`.
-func NewLogger() *Logger {
-	return &Logger{
-		Out:       os.Stderr,
+func NewLogger() *logrus.Logger {
+	return &logrus.Logger{
+		Out:       NewStderr(os.Stderr),
 		Formatter: new(logrus.TextFormatter),
 		Hooks:     make(logrus.LevelHooks),
 		Level:     logrus.DebugLevel,

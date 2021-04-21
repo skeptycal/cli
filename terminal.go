@@ -4,8 +4,12 @@ import (
 	"fmt"
 	"io"
 	"strings"
+
+	"golang.org/x/sys/unix"
 	// log "github.com/sirupsen/logrus"
 )
+
+const newline byte = '\n'
 
 type Terminal struct {
 
@@ -55,13 +59,6 @@ type Terminal struct {
 	// log               *log.Logger
 }
 
-// Inverse sets the inverse ANSI effect if the terminal supports it.
-func (t *Terminal) Inverse() {
-	if t.useColor {
-		t.Print(simpleEncode(inverse))
-	}
-}
-
 // Reset sets the ANSI foreground, background, and effect to default.
 func (t *Terminal) Reset() (n int, err error) {
 	if t.useColor {
@@ -70,11 +67,7 @@ func (t *Terminal) Reset() (n int, err error) {
 	return 0, nil
 }
 
-// func (t *Terminal) SetDefault() {
-
-// }
-
-func (t *Terminal) Color() string {
+func (t *Terminal) color() string {
 	if t.useColor {
 		return string(t.colorBytes)
 	}
@@ -100,7 +93,7 @@ func (t *Terminal) String() string {
 	if !t.useColor {
 		sb.WriteString("ANSI terminal - no color output.")
 	} else {
-		fmt.Fprintf(sb, "%vANSI color output (fg = %v, bg = %v, ef = %v) %v\n", t.Color(), t.defaultForeground, t.defaultBackground, t.defaultEffect, Reset)
+		fmt.Fprintf(sb, "%vANSI color output (fg = %v, bg = %v, ef = %v) %v\n", t.color(), t.defaultForeground, t.defaultBackground, t.defaultEffect, Reset)
 	}
 	return sb.String()
 }
@@ -113,10 +106,61 @@ func (t *Terminal) devinfo() string {
 		fmt.Fprintf(sb, "CLI variable (DefaultForeground): %v\n", t.defaultForeground)
 		fmt.Fprintf(sb, "CLI variable (DefaultBackground): %v\n", t.defaultBackground)
 		fmt.Fprintf(sb, "CLI variable (DefaultEffect): %v\n", t.defaultEffect)
-		fmt.Fprintf(sb, "CLI variable (Color): %q\n", t.Color())
+		fmt.Fprintf(sb, "CLI variable (Color): %q\n", t.color())
 		fmt.Fprintf(sb, "CLI variable (UseColor): %t\n", t.useColor)
 		fmt.Fprintf(sb, "CLI variable (devMode): %t\n", t.devMode)
 		fmt.Fprintf(sb, "CLI writer pointer: %v\n\n", &t.w)
+	}
+	return sb.String()
+}
+
+// GetTerminalSize returns device caps for the terminal.
+// The Winsize struct returned includes:
+//  Row, Col, Xpixel, and Ypixel.
+func GetTerminalSize() (*unix.Winsize, error) {
+	return getWinsize()
+}
+
+// Columns returns the number of columns in the terminal,
+// similar to the COLUMNS environment variable on macOS
+// and Linux systems.
+func Columns() int {
+	ws, err := GetTerminalSize()
+	if err != nil {
+		return 0
+	}
+	return int(ws.Col)
+}
+
+// Wrap splits a string into lines no longer than width.
+func Wrap(s string, width int) string {
+
+	if len(s) <= width {
+		return s
+	}
+
+	sb := strings.Builder{}
+	defer sb.Reset()
+
+	for {
+		i := width
+		for {
+			if s[i] == ' ' {
+				break
+			}
+			i--
+		}
+
+		part := strings.TrimSpace(s[:i])
+		sb.WriteString(part)
+		sb.WriteByte(newline)
+
+		s = strings.TrimSpace(s[i:])
+		if len(s) <= width {
+			sb.WriteString(s)
+			sb.WriteByte(newline)
+			break
+		}
 	}
 	return sb.String()
 }
