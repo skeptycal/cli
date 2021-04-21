@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"os/exec"
 	"strings"
 
 	"github.com/skeptycal/ansi"
@@ -41,23 +40,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-}
-
-func GetScreenWidth() (int, error) {
-	ws, err := cli.GetTerminalSize()
-	if err != nil {
-		return 0, err
-	}
-	return int(ws.Col), nil
 }
 
 func ColorTest() error {
 
-	width, err := GetScreenWidth()
-	if err != nil {
-		return err
-	}
+	width := cli.Columns()
 
 	unitWidth := width / fmtLength
 
@@ -76,7 +63,7 @@ func ColorTest() error {
 		sb.WriteString(colorString(f).bg())
 	}
 
-	lines := SplitLinesSize(sb.String(), width)
+	lines := sb.String()
 	sb.Reset()
 
 	sb.WriteString("Color Test\n\n")
@@ -87,44 +74,4 @@ func ColorTest() error {
 	out.Println(retval)
 
 	return nil
-}
-
-func ShellTest() {
-	app := "echo"
-
-	arg0 := "-e"
-	arg1 := "Hello world"
-	arg2 := "\n\tfrom"
-	arg3 := "${COLUMNS}"
-
-	cmd := exec.Command(app, arg0, arg1, arg2, arg3)
-	stdout, err := cmd.Output()
-
-	if err != nil {
-		fmt.Println(err.Error())
-		return
-	}
-
-	// Print the output
-	fmt.Println(string(stdout))
-}
-
-// Cmd 封装exec ，有shell= true 这样的选项
-// Reference: https://stackoverflow.com/a/27764262
-func Cmd(cmd string, shell bool) []byte {
-
-	if shell {
-		out, err := exec.Command("bash", "-c", cmd).Output()
-		if err != nil {
-			panic("some error found")
-		}
-		return out
-	} else {
-		out, err := exec.Command(cmd).Output()
-		if err != nil {
-			panic("some error found")
-		}
-		return out
-
-	}
 }
