@@ -1,6 +1,6 @@
 // +build plan9 solaris
 
-package cli
+package terminal
 
 // getWinsize contains code from the goterm package
 // Reference: https://github.com/buger/goterm (MIT License)

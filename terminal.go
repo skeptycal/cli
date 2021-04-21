@@ -5,6 +5,7 @@ import (
 	"io"
 	"strings"
 
+	_ "github.com/skeptycal/cli/terminal"
 	"golang.org/x/sys/unix"
 	// log "github.com/sirupsen/logrus"
 )
@@ -118,7 +119,7 @@ func (t *Terminal) devinfo() string {
 // The Winsize struct returned includes:
 //  Row, Col, Xpixel, and Ypixel.
 func GetTerminalSize() (*unix.Winsize, error) {
-	return getWinsize()
+	return terminal.getWinsize()
 }
 
 // Columns returns the number of columns in the terminal,
