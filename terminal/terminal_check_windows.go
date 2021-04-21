@@ -30,13 +30,6 @@ func checkIfTerminal(w io.Writer) bool {
 	return false
 }
 
-type winsize struct {
-	Row    uint16
-	Col    uint16
-	Xpixel uint16
-	Ypixel uint16
-}
-
 func getWinsize() (*winsize, error) {
 	ws := new(winsize)
 	fd := os.Stdout.Fd()

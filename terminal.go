@@ -5,7 +5,7 @@ import (
 	"io"
 	"strings"
 
-	_ "github.com/skeptycal/cli/terminal"
+	"github.com/skeptycal/cli/terminal"
 	"golang.org/x/sys/unix"
 	// log "github.com/sirupsen/logrus"
 )
@@ -115,18 +115,22 @@ func (t *Terminal) devinfo() string {
 	return sb.String()
 }
 
-// GetTerminalSize returns device caps for the terminal.
+// GetWinSize returns device caps for the terminal.
 // The Winsize struct returned includes:
 //  Row, Col, Xpixel, and Ypixel.
-func GetTerminalSize() (*unix.Winsize, error) {
-	return terminal.getWinsize()
+func GetWinSize() (*unix.Winsize, error) {
+	return terminal.GetWinsize()
+}
+
+func CheckIfTerminal(w io.Writer) bool {
+	return terminal.CheckIfTerminal(w)
 }
 
 // Columns returns the number of columns in the terminal,
 // similar to the COLUMNS environment variable on macOS
 // and Linux systems.
 func Columns() int {
-	ws, err := GetTerminalSize()
+	ws, err := GetWinSize()
 	if err != nil {
 		return 0
 	}

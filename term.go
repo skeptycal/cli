@@ -203,7 +203,7 @@ func Background(str string, color int) string {
 
 // Width gets console width
 func Width() int {
-	ws, err := getWinsize()
+	ws, err := GetWinSize()
 
 	if err != nil {
 		return -1
@@ -214,7 +214,7 @@ func Width() int {
 
 // Height gets console height
 func Height() int {
-	ws, err := getWinsize()
+	ws, err := GetWinSize()
 	if err != nil {
 		return -1
 	}
