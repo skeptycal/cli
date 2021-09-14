@@ -25,27 +25,6 @@ import (
 	"strings"
 )
 
-// Reset all custom styles
-// const Reset = "\033[0m"
-
-// ResetColor - Reset to default color
-const ResetColor = "\033[32m"
-
-// ResetLineConst - Return cursor to start of line and clean it
-const ResetLineConst = "\r\033[K"
-
-// List of possible colors
-const (
-	BLACK = iota
-	RED
-	GREEN
-	YELLOW
-	BLUE
-	MAGENTA
-	CYAN
-	WHITE
-)
-
 var Output *bufio.Writer = bufio.NewWriter(os.Stdout)
 
 func getColor(code int) string {
@@ -81,7 +60,7 @@ type winsize struct {
 // }
 
 // Screen - Global screen buffer
-// Its not recommended write to buffer dirrectly, use package Print,Printf,Println fucntions instead.
+// Its not recommended write to buffer directly, use package Print,Printf,Println fucntions instead.
 var Screen *bytes.Buffer = new(bytes.Buffer)
 
 // GetXY gets relative or absolute coordinates

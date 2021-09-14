@@ -1,14 +1,14 @@
 package cli
 
 import (
-	"os"
-
 	logrus "github.com/sirupsen/logrus"
 )
 
 // type Logger = logrus.Logger
 
-var log = NewLogger()
+var DefaultLogLevel logrus.Level = logrus.DebugLevel
+
+var Log *logrus.Logger = NewLogger()
 
 // NewLogger creates a new logrus logger that is compatible with
 // the go log package and has terminal stderr defaults set.
@@ -29,9 +29,9 @@ var log = NewLogger()
 // It's recommended to make this a global instance called `log`.
 func NewLogger() *logrus.Logger {
 	return &logrus.Logger{
-		Out:       NewStderr(os.Stderr),
+		Out:       NewStderr(),
 		Formatter: new(logrus.TextFormatter),
 		Hooks:     make(logrus.LevelHooks),
-		Level:     logrus.DebugLevel,
+		Level:     DefaultLogLevel,
 	}
 }
