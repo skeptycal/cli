@@ -4,11 +4,11 @@ import (
 	logrus "github.com/sirupsen/logrus"
 )
 
-// type Logger = logrus.Logger
+type Logger = logrus.Logger
 
 var DefaultLogLevel logrus.Level = logrus.DebugLevel
 
-var Log *logrus.Logger = NewLogger()
+var Log *Logger = NewLogger()
 
 // NewLogger creates a new logrus logger that is compatible with
 // the go log package and has terminal stderr defaults set.
@@ -27,8 +27,8 @@ var Log *logrus.Logger = NewLogger()
 //    }
 //
 // It's recommended to make this a global instance called `log`.
-func NewLogger() *logrus.Logger {
-	return &logrus.Logger{
+func NewLogger() *Logger {
+	return &Logger{
 		Out:       NewStderr(),
 		Formatter: new(logrus.TextFormatter),
 		Hooks:     make(logrus.LevelHooks),

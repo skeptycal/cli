@@ -10,11 +10,12 @@ The ansi color terminal support is provided by the ansi package. Reference:
 github.com/skeptycal/ansi
 
 const Reset string = ansi.Reset ...
+const NUL byte = iota ...
 const BLACK = iota ...
 const PCT = 0x8000 << shift
 var ResetBytes []byte = ansi.ResetBytes ...
 var DefaultLogLevel logrus.Level = logrus.DebugLevel
-var Log *logrus.Logger = NewLogger()
+var GetWinSize = terminal.GetWinsize
 var Output *bufio.Writer = bufio.NewWriter(os.Stdout)
 var Screen *bytes.Buffer = new(bytes.Buffer)
 func Background(str string, color int) string
@@ -27,7 +28,6 @@ func Columns() int
 func Context(data string, idx, max int) string
 func CurrentHeight() int
 func Flush()
-func GetWinSize() (*unix.Winsize, error)
 func GetXY(x int, y int) (int, int)
 func Height() int
 func Highlight(str, substr string, color int) string
@@ -38,20 +38,27 @@ func MoveCursorDown(bias int)
 func MoveCursorForward(bias int)
 func MoveCursorUp(bias int)
 func MoveTo(str string, x int, y int) (out string)
-func NewLogger() *logrus.Logger
 func Print(a ...interface{}) (n int, err error)
 func Printf(format string, a ...interface{}) (n int, err error)
 func Println(a ...interface{}) (n int, err error)
 func ResetLine(str string) (out string)
+func Rows() int
 func Width() int
 func Wrap(s string, width int) string
+func XPixels() int
+func YPixels() int
 type Ansi = ansi.Ansi
 type AnsiColor struct{ ... }
+    func NewColor(in byte) *AnsiColor
+type Any = interface{}
 type CLI interface{ ... }
     func New() CLI
     func NewFromWriter(w io.Writer) CLI
     func NewStderr() CLI
 type CLIControls interface{ ... }
 type CursorControls interface{ ... }
+type Logger = logrus.Logger
+    var Log *Logger = NewLogger()
+    func NewLogger() *Logger
 type Printer interface{ ... }
 type Terminal struct{ ... }

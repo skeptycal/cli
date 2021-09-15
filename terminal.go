@@ -4,9 +4,6 @@ import (
 	"fmt"
 	"io"
 	"strings"
-
-	"github.com/skeptycal/cli/terminal"
-	"golang.org/x/sys/unix"
 	// log "github.com/sirupsen/logrus"
 )
 
@@ -118,6 +115,6 @@ func (t *Terminal) devinfo() string {
 // GetWinSize returns device caps for the terminal.
 // The Winsize struct returned includes:
 //  Row, Col, Xpixel, and Ypixel.
-func GetWinSize() (*unix.Winsize, error) {
-	return terminal.GetWinsize()
-}
+// func GetWinSize() (*unix.Winsize, error) {
+// 	return terminal.GetWinsize()
+// }
