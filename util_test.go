@@ -1,6 +1,8 @@
 package cli
 
 import (
+	"bytes"
+	"io"
 	"os"
 	"testing"
 )
@@ -68,15 +70,30 @@ func TestColumns(t *testing.T) {
 
 	t.Run("Columns()", func(t *testing.T) {
 
-		ws, err := GetWinSize()
-
-		if err != nil {
-			t.Fatal(err)
-		}
-
 		got := Columns()
 		if got < 1 || got > 1000 {
-			t.Errorf("Columns() - expected int between 1 and 1000, got: %v (ws = %v)", got, ws)
+			t.Errorf("Columns() - expected int between 1 and 1000, got: %v", got)
 		}
 	})
+}
+
+func TestCheckIfTerminal(t *testing.T) {
+	tests := []struct {
+		name  string
+		w     io.Writer
+		want  bool
+		wantW string
+	}{
+		// TODO: Add test cases.
+		{"stdout", os.Stdout, true, ""},
+		{"nil", nil, false, ""},
+		{"&bytes.Buffer{}", &bytes.Buffer{}, false, ""},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := CheckIfTerminal(tt.w); got != tt.want {
+				t.Errorf("CheckIfTerminal() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }

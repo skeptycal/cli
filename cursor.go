@@ -22,22 +22,22 @@ const (
 	ansiHideCursor string = "\x1b[?25l"
 )
 
-// Up moves the cursor n cells to up.
+// Up moves the cursor n cells up.
 func (t *Terminal) Up(n int) {
 	t.Printf(fmtAnsiUp, n)
 }
 
-// Down moves the cursor n cells to down.
+// Down moves the cursor n cells down.
 func (t *Terminal) Down(n int) {
 	t.Printf(fmtAnsiDown, n)
 }
 
-// Right moves the cursor n cells to right.
+// Right moves the cursor n cells right.
 func (t *Terminal) Right(n int) {
 	t.Printf(fmtAnsiRight, n)
 }
 
-// Left moves the cursor n cells to left.
+// Left moves the cursor n cells left.
 func (t *Terminal) Left(n int) {
 	t.Printf(fmtAnsiLeft, n)
 }

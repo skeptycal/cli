@@ -1,12 +1,10 @@
 package cli
 
 import (
-	"errors"
-	"fmt"
 	"io"
-	"strconv"
 	"strings"
 
+	"github.com/buger/goterm"
 	"github.com/skeptycal/cli/terminal"
 )
 
@@ -32,38 +30,12 @@ func (a AnsiColor) String() string {
 	return a.out
 }
 
-func encode(b byte) string {
-	// return ansiPrefix + string([]byte{b}) + ansiSuffix
-	return fmt.Sprintf(fmtANSI, b)
-}
-
-func byteEncode(b Any) (byte, error) {
-	switch v := b.(type) {
-	case byte:
-		return v, nil
-	case int:
-		return byte(v & 255), nil
-	case uint:
-		return byte(v & 255), nil
-	case float32, float64:
-		return byte(v.(float64)), nil
-	case string:
-		i, err := strconv.ParseUint(v, 10, 8)
-		if err != nil {
-			return 0, err
-		}
-		return byte(i), nil
-	default:
-		return 0, errors.New("encoding error: unable to convert input to byte")
-	}
-}
-
 // BasicEncode encodes a basic (3-4 bit) ANSI color code.
 // The code may be passed in as a byte, int, uint, float32,
 // float64, or string and will be converted to the best
 // guess of a byte (uint8) value before encoding.
 //
-// It is best to use a byte value ...
+// It is best to simply use a byte value ...
 //
 // The format is "\x1b[%dm"
 func BasicEncode(b interface{}) string {
@@ -73,44 +45,7 @@ func BasicEncode(b interface{}) string {
 		return ""
 	}
 
-	return encode(c)
-}
-
-func CheckIfTerminal(w io.Writer) bool { return terminal.CheckIfTerminal(w) }
-
-// Columns returns the number of columns in the terminal,
-// similar to the COLUMNS environment variable on macOS
-// and Linux systems.
-func Columns() int {
-	ws, err := GetWinSize()
-	if err != nil {
-		return 0
-	}
-	return int(ws.Col)
-}
-
-func Rows() int {
-	ws, err := GetWinSize()
-	if err != nil {
-		return 0
-	}
-	return int(ws.Row)
-}
-
-func XPixels() int {
-	ws, err := GetWinSize()
-	if err != nil {
-		return 0
-	}
-	return int(ws.Xpixel)
-}
-
-func YPixels() int {
-	ws, err := GetWinSize()
-	if err != nil {
-		return 0
-	}
-	return int(ws.Ypixel)
+	return simpleEncode(c)
 }
 
 // Wrap splits a string into lines no longer than width.
@@ -145,3 +80,37 @@ func Wrap(s string, width int) string {
 	}
 	return sb.String()
 }
+
+func CheckIfTerminal(w io.Writer) bool {
+
+	// TODO not working ... see issues
+	return terminal.CheckIfTerminal(w)
+}
+
+// Columns returns the number of columns in the terminal,
+// similar to the COLUMNS environment variable on macOS
+// and Linux systems.
+func Columns() int {
+	return goterm.Width()
+}
+
+// Rows returns the number of rows in the terminal,
+func Rows() int {
+	return goterm.Height()
+}
+
+// func XPixels() int {
+// 	ws, err := GetWinSize()
+// 	if err != nil {
+// 		return 0
+// 	}
+// 	return int(ws.Xpixel)
+// }
+
+// func YPixels() int {
+// 	ws, err := GetWinSize()
+// 	if err != nil {
+// 		return 0
+// 	}
+// 	return int(ws.Ypixel)
+// }

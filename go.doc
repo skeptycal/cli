@@ -45,8 +45,6 @@ func ResetLine(str string) (out string)
 func Rows() int
 func Width() int
 func Wrap(s string, width int) string
-func XPixels() int
-func YPixels() int
 type Ansi = ansi.Ansi
 type AnsiColor struct{ ... }
     func NewColor(in byte) *AnsiColor

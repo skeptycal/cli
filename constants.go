@@ -9,7 +9,6 @@ import (
 
 type (
 	Any  = interface{}
-	any  = struct{}
 	Ansi = ansi.Ansi
 )
 
