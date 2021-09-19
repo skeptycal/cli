@@ -2,6 +2,7 @@ package cli
 
 // term.go contains code from the goterm package
 // Reference: https://github.com/buger/goterm
+// MIT License
 //
 // goterm provides basic bulding blocks for advanced console UI
 //
@@ -20,6 +21,7 @@ package cli
 import (
 	"bufio"
 	"bytes"
+	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -205,15 +207,29 @@ func CurrentHeight() int {
 	return strings.Count(Screen.String(), "\n")
 }
 
+func newCLIError(format string, args ...interface{}) error {
+	return errors.New(fmt.Sprintf(format, args...))
+}
+
 // Flush buffer and ensure that it will not overflow screen
-func Flush() {
+func FlushNoOverflow() error {
 	for idx, str := range strings.SplitAfter(Screen.String(), "\n") {
 		if idx > Height() {
-			return
+			return newCLIError("screen overflow detected; output truncated after %v lines", idx)
 		}
 
-		_, _ = Output.WriteString(str)
+		_, err := Output.WriteString(str)
+		if err != nil {
+			return newCLIError("error writing to terminal buffer: %v", err)
+		}
 	}
+
+	Flush()
+	return nil
+}
+
+// Flush buffer and ensure that it will not overflow screen
+func Flush() {
 
 	Output.Flush()
 	Screen.Reset()

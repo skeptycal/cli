@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"strings"
@@ -9,32 +10,51 @@ import (
 	"github.com/skeptycal/cli"
 )
 
+const (
+	title     string = "-------------------------> Color Test <-------------------------\n"
+	fmtString string = "%s %3d %s"
+)
+
 var out = cli.New()
 
-const fmtString string = "%s %3d %s"
-
 func main() {
-	out.CLS()
-	err := ColorTest()
+	// out.CLS()
+	n, err := ColorTest()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("error writing color test (%v bytes written) to terminal: %v", n, err)
 	}
 }
 
-func ColorTest() error {
-	sb := strings.Builder{}
-	defer sb.Reset()
-
-	sb.WriteString("-------------------------> Color Test <-------------------------\n")
-
-	out.Println(sb.String())
-
-	fgTest()
-	bgTest()
-	return nil
+func fakeColorTest() (n int, err error) {
+	return 42, errors.New("fake error for testing (should say 42 bytes)")
 }
 
-func fgTest() {
+func ColorTest() (n int, err error) {
+
+	nn, err := out.Println(title)
+	if err != nil {
+		return nn, err
+	}
+	n += nn
+
+	nn, err = fgTest()
+	if err != nil {
+		return nn, err
+	}
+
+	n += nn
+
+	nn, err = bgTest()
+	if err != nil {
+		return nn, err
+	}
+
+	n += nn
+
+	return n, nil
+}
+
+func fgTest() (n int, err error) {
 	sb := strings.Builder{}
 	defer sb.Reset()
 
@@ -54,10 +74,10 @@ func fgTest() {
 	sb.WriteString(colorSet(232, 255, 12, 6, prefix, fg))
 	sb.WriteString("\n")
 
-	out.Println(sb.String())
+	return out.Println(sb.String())
 }
 
-func bgTest() {
+func bgTest() (n int, err error) {
 	sb := strings.Builder{}
 	defer sb.Reset()
 
@@ -88,7 +108,8 @@ func bgTest() {
 	sb.WriteString("\n")
 	sb.WriteString(colorSet(232, 255, 12, 6, prefix, bg24))
 	sb.WriteString("\n")
-	out.Println(sb.String())
+
+	return out.Println(sb.String())
 }
 
 func colorSet(start, end, major, minor int, prefix string, colorFunc func(int) string) string {

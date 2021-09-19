@@ -58,9 +58,9 @@ type CLI interface {
 	io.StringWriter
 	fmt.Stringer
 	Printer
+	CLIControls
 	SetColor(color ansi.Ansi)
 	Reset() (n int, err error)
-	CLIControls
 }
 
 // New returns a new ANSI compatible terminal interface based on

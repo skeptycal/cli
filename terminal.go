@@ -22,6 +22,8 @@ type Terminal struct {
 	// Implementations must not retain p.
 	w io.Writer `default:"defaultWriter"`
 
+	buf strings.Builder
+
 	// useColor is true if the terminal supports color and colored
 	// output is desired. It is true by default on terminals that
 	// support it.
@@ -53,6 +55,7 @@ type Terminal struct {
 	defaultForeground byte `default:"15"`
 	defaultBackground byte // default is Zero Value (0)
 	defaultEffect     byte // default is Zero Value (0)
+
 	// useLog            bool // TODO - add logging
 	// log               *log.Logger
 }

@@ -7,28 +7,28 @@ import (
 	"github.com/skeptycal/cli"
 )
 
+var (
+	out   = cli.New()
+	green = ansi.NewColor(2, 0, 0)
+	fake  = "abcdefghijklmnopqrstuvwxyz01234567890: "
+)
+
 func main() {
 
-	var (
-		out   = cli.New()
-		green = ansi.NewColor(2, 0, 0)
-		fake  = strings.Repeat("fake stuff ", 32)
-	)
-
-	out.CLS()
+	// out.CLS()
 	out.SetColor(green)
 
-	width := cli.Columns()
-	out.Println("Terminal current width : ", width)
-	out.Println(cli.Wrap(fake, width))
+	fake = strings.Repeat("fake stuff ", 42)
 
-	out.Br()
-	width = 120
-	out.Println("Screen width: ", width)
-	out.Println(cli.Wrap(fake, width))
+	testWrap(fake, cli.Columns())
+	testWrap(fake, 120)
+	testWrap(fake, 79)
+	testWrap(fake, 1000)
+}
 
-	width = 79
+func testWrap(s string, width int) {
 	out.Br()
-	out.Println("Screen width: ", width)
-	out.Println(cli.Wrap(fake, width))
+	out.Printf("Wrap string of length %v to width of %v\n", len(s), width)
+	out.Println("------------------------------------------")
+	out.Println(cli.Wrap(s, width))
 }

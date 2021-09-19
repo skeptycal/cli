@@ -50,14 +50,14 @@ func TestBasicEncode(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			c, err := byteEncode(tt.input)
+			c, err := ByteEncode(tt.input)
 			if err != nil {
 				if !tt.wantErr {
 					t.Fatal(err)
 				}
 			} else {
 
-				_ = check("NewColor()", NewColor(c).String(), tt.want, tt.wantErr, t)
+				_ = check("NewColor()", NewAnsiColor(c).String(), tt.want, tt.wantErr, t)
 
 				// check("BasicEncode()", BasicEncode(tt.input), tt.want, false, t)
 
@@ -69,7 +69,9 @@ func TestBasicEncode(t *testing.T) {
 func TestColumns(t *testing.T) {
 
 	t.Run("Columns()", func(t *testing.T) {
-
+		// TODO - find out why this function is not returning the
+		// correct number of columns...
+		// see issue
 		got := Columns()
 		if got < 1 || got > 1000 {
 			t.Errorf("Columns() - expected int between 1 and 1000, got: %v", got)

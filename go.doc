@@ -12,6 +12,7 @@ github.com/skeptycal/ansi
 const Reset string = ansi.Reset ...
 const NUL byte = iota ...
 const BLACK = iota ...
+const NotNewLine = " \t\r\n\v" ...
 const PCT = 0x8000 << shift
 var ResetBytes []byte = ansi.ResetBytes ...
 var DefaultLogLevel logrus.Level = logrus.DebugLevel
@@ -21,6 +22,7 @@ var Screen *bytes.Buffer = new(bytes.Buffer)
 func Background(str string, color int) string
 func BasicEncode(b interface{}) string
 func Bold(str string) string
+func ByteEncode(b Any) (byte, error)
 func CheckIfTerminal(w io.Writer) bool
 func Clear()
 func Color(str string, color int) string
@@ -28,6 +30,7 @@ func Columns() int
 func Context(data string, idx, max int) string
 func CurrentHeight() int
 func Flush()
+func FlushNoOverflow() error
 func GetXY(x int, y int) (int, int)
 func Height() int
 func Highlight(str, substr string, color int) string
@@ -45,9 +48,11 @@ func ResetLine(str string) (out string)
 func Rows() int
 func Width() int
 func Wrap(s string, width int) string
+type ANSI interface{ ... }
+    func NewAnsiColor(in byte) ANSI
+    func NewSimpleANSI(c byte) ANSI
 type Ansi = ansi.Ansi
 type AnsiColor struct{ ... }
-    func NewColor(in byte) *AnsiColor
 type Any = interface{}
 type CLI interface{ ... }
     func New() CLI
@@ -59,4 +64,5 @@ type Logger = logrus.Logger
     var Log *Logger = NewLogger()
     func NewLogger() *Logger
 type Printer interface{ ... }
+type SimpleANSI struct{ ... }
 type Terminal struct{ ... }
