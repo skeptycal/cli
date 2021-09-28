@@ -61,7 +61,7 @@ func BasicEncode(b interface{}) string {
 
 	switch v := b.(type) {
 	case byte:
-		NewSimpleANSI(v).String()
+		return NewSimpleANSI(v).String()
 	default:
 		c, err := ByteEncode(b)
 		if err != nil {
@@ -70,7 +70,7 @@ func BasicEncode(b interface{}) string {
 		return NewSimpleANSI(c).String()
 	}
 
-	return ""
+	// return ""
 }
 
 // ByteEncode returns the best guess encoding of the given

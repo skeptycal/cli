@@ -63,6 +63,10 @@ type CursorControls interface{ ... }
 type Logger = logrus.Logger
     var Log *Logger = NewLogger()
     func NewLogger() *Logger
+type Parser interface{ ... }
+    func NewParser(src io.Reader, dst io.WriteCloser) Parser
 type Printer interface{ ... }
 type SimpleANSI struct{ ... }
 type Terminal struct{ ... }
+type Wrapper interface{ ... }
+    func NewBasicWrapper(src io.Reader, dst io.WriteCloser) Wrapper

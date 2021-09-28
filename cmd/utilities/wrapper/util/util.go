@@ -28,5 +28,5 @@ func init() {
 
 func usage() {
 	Out.Printf("usage: %v%s %v%s\n", White, Me, Green, optionList)
-	os.Exit(0)
+	// os.Exit(0)
 }
